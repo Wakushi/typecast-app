@@ -33,7 +33,7 @@ export default function Page({}: {
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px] max-w-[375px]">
-            {farcasterUser?.status !== "approved" ? (
+            {farcasterUser?.status === "approved" ? (
               <UploadForm farcasterUser={farcasterUser as FarcasterUser} />
             ) : (
               <LoginWindow

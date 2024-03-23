@@ -17,6 +17,7 @@ import { Textarea } from "./ui/textarea"
 import { useState } from "react"
 import { FarcasterUser } from "@/lib/types/farcaster-user"
 import { getFnameFromFid } from "@/lib/actions"
+import { Loader2 } from "lucide-react"
 
 const hireMeFormSchema = z.object({
   skills: z.string().min(1, "Skills are required"),
@@ -51,65 +52,90 @@ export default function HireFrameForm({
   })
 
   async function onSubmit(values: z.infer<typeof hireMeFormSchema>) {
-    const { skills, experience, githubLink, cast, paymentAddress, price } =
-      values
-    const fName = farcasterUser.fid
-      ? await getFnameFromFid(farcasterUser.fid)
-      : ""
-    // 1. Post JSON data to PINATA and get IPFS hash
-    const request = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_API_URL}/api/pinata`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          skills,
-          experience,
-          githubLink,
-          paymentAddress,
-          price,
-          fid: farcasterUser?.fid ?? "",
-          fName: fName,
-        }),
+    try {
+      setCastCompleteMessage("")
+      setLoading(true)
+      const { skills, experience, githubLink, cast, paymentAddress, price } =
+        values
+      const fName = farcasterUser.fid
+        ? await getFnameFromFid(farcasterUser.fid)
+        : ""
+      // 1. Post JSON data to PINATA and get IPFS hash
+      const request = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_API_URL}/api/pinata`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            skills,
+            experience,
+            githubLink,
+            paymentAddress,
+            price,
+            fid: farcasterUser?.fid ?? "",
+            fName: fName,
+          }),
+        }
+      )
+      const response = await request.json()
+      const pinataIpfsHash = response.success
+      if (pinataIpfsHash) {
+        // 2. Generate a frame url with the IPFS URL
+        const frameUrl = `${process.env.NEXT_PUBLIC_BASE_API_URL}/api/hire/${pinataIpfsHash}`
+        // 3. Cast the messagen with the frame url
+        const data = JSON.stringify({
+          signer: farcasterUser.privateKey,
+          fid: farcasterUser.fid,
+          castMessage: values.cast + " " + frameUrl,
+          parentUrl:
+            "chain://eip155:1/erc721:0x7dd4e31f1530ac682c8ea4d8016e95773e08d8b0",
+        })
+        const submitMessage = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_API_URL}/api/message`,
+          {
+            method: "POST",
+            headers: {
+              contentType: "application/json",
+            },
+            body: data,
+          }
+        )
+        const messageJson = await submitMessage.json()
+        console.log("messageJson", messageJson)
+        if (submitMessage.status != 200) {
+          setLoading(false)
+          setCastComplete(true)
+          setCastCompleteMessage("Problem sending cast")
+        }
+        setLoading(false)
+        setCastComplete(true)
+        setCastCompleteMessage("Cast Sent!")
       }
-    )
-    const response = await request.json()
-    const pinataIpfsHash = response.success
-    if (pinataIpfsHash) {
-      // 2. Generate a frame url with the IPFS URL
-      const frameUrl = `${process.env.NEXT_PUBLIC_BASE_API_URL}/api/hire/${pinataIpfsHash}`
-      console.log("frameUrl", frameUrl)
-      // 3. Cast the messagen with the frame url
-      // const data = JSON.stringify({
-      //   signer: farcasterUser.privateKey,
-      //   fid: farcasterUser.fid,
-      //   castMessage: values.cast,
-      //   parentUrl:
-      //     "chain://eip155:1/erc721:0x7dd4e31f1530ac682c8ea4d8016e95773e08d8b0",
-      // })
-      // const submitMessage = await fetch(
-      //   `${process.env.NEXT_PUBLIC_BASE_API_URL}/api/message`,
-      //   {
-      //     method: "POST",
-      //     headers: {
-      //       contentType: "application/json",
-      //     },
-      //     body: data,
-      //   }
-      // )
-      // const messageJson = await submitMessage.json()
-      // console.log("messageJson", messageJson)
-      // if (submitMessage.status != 200) {
-      //   setLoading(false)
-      //   setCastComplete(true)
-      //   setCastCompleteMessage("Problem sending cast")
-      // }
-      // setLoading(false)
-      // setCastComplete(true)
-      // setCastCompleteMessage("Cast Sent!")
+    } catch (error) {
+      console.log(error)
+      setLoading(false)
+      setCastComplete(true)
+      setCastCompleteMessage("Problem uploading file")
     }
+  }
+
+  function ButtonLoading() {
+    return (
+      <Button className="w-full" disabled>
+        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+        Please wait
+      </Button>
+    )
+  }
+
+  if (castComplete) {
+    return (
+      <div className="flex justify-center items-center h-full">
+        <h2 className="text-xl font-bold">{castCompleteMessage}</h2>
+      </div>
+    )
   }
 
   return (
@@ -231,10 +257,13 @@ export default function HireFrameForm({
               </FormItem>
             )}
           />
-
-          <Button type="submit" className="w-full">
-            Post
-          </Button>
+          {loading ? (
+            ButtonLoading()
+          ) : (
+            <Button className="w-full" type="submit">
+              Submit
+            </Button>
+          )}
         </form>
       </Form>
     </div>
