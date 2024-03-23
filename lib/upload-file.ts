@@ -46,7 +46,6 @@ export async function uploadFile(selectedFile: any) {
     )
     const uploadResJson = await uploadRes.json()
     fileCID = uploadResJson.IpfsHash
-    console.log(fileCID)
     const fileExtensions: any = {
       "image/jpeg": "jpeg",
       "image/png": "png",
@@ -65,7 +64,6 @@ export async function uploadFile(selectedFile: any) {
     const deleteData = JSON.stringify({
       apiKey: keyId,
     })
-    console.log(deleteData)
     const deleteKey = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_API_URL}/api/key`,
       {
@@ -77,7 +75,6 @@ export async function uploadFile(selectedFile: any) {
       }
     )
     const deleteJson = await deleteKey.json()
-    console.log(deleteJson)
   } catch (error) {
     console.log("Error deleting API key:", error)
   }

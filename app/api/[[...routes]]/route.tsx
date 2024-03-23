@@ -44,6 +44,7 @@ app.frame("/hire/:ipfsHash", async (c) => {
     price,
     available,
     fName,
+    userPfp,
     paymentAddress,
   } = data
   if (!available) {
@@ -160,7 +161,10 @@ app.frame("/hire/:ipfsHash", async (c) => {
                       height: "100%",
                       objectFit: "cover",
                     }}
-                    src="https://cdn.download.ams.birds.cornell.edu/api/v1/asset/362635561/900"
+                    src={
+                      userPfp ||
+                      "https://logowik.com/content/uploads/images/ethereum-eth-icon9411.logowik.com.webp"
+                    }
                     alt="profile"
                   />
                 </div>
@@ -297,7 +301,10 @@ app.frame("/hire/:ipfsHash", async (c) => {
               >
                 <img
                   style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                  src="https://cdn.download.ams.birds.cornell.edu/api/v1/asset/362635561/900"
+                  src={
+                    userPfp ||
+                    "https://logowik.com/content/uploads/images/ethereum-eth-icon9411.logowik.com.webp"
+                  }
                   alt="profile"
                 />
               </div>

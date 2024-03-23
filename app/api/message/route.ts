@@ -55,7 +55,6 @@ export async function POST(req: NextRequest, res: NextResponse) {
     )
 
     const castResult = await castRequest.json()
-    console.log(castResult)
 
     if (!castResult.hash) {
       return NextResponse.json(

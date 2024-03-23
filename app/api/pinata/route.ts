@@ -16,7 +16,6 @@ export async function POST(req: NextRequest, res: NextResponse) {
       },
     }
     const { IpfsHash } = await pinata.pinJSONToIPFS(body, options)
-    console.log("IpfsHash: ", IpfsHash)
     return NextResponse.json({ success: IpfsHash })
   } catch (error) {
     console.log(error)

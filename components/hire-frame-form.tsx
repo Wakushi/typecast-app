@@ -16,8 +16,9 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "./ui/textarea"
 import { useState } from "react"
 import { FarcasterUser } from "@/lib/types/farcaster-user"
-import { getFnameFromFid } from "@/lib/actions"
+import { getFnameFromFid, getUserDataFromFid } from "@/lib/actions"
 import { Loader2 } from "lucide-react"
+import Image from "next/image"
 
 const hireMeFormSchema = z.object({
   skills: z.string().min(1, "Skills are required"),
@@ -55,12 +56,20 @@ export default function HireFrameForm({
     try {
       setCastCompleteMessage("")
       setLoading(true)
-      const { skills, experience, githubLink, cast, paymentAddress, price } =
-        values
+      const {
+        skills,
+        experience,
+        githubLink,
+        cast,
+        paymentAddress,
+        price,
+        portfolioLink,
+      } = values
       const fName = farcasterUser.fid
         ? await getFnameFromFid(farcasterUser.fid)
         : ""
-      // 1. Post JSON data to PINATA and get IPFS hash
+      const userData = await getUserDataFromFid(farcasterUser.fid)
+      console.log("client userData", userData)
       const request = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_API_URL}/api/pinata`,
         {
@@ -72,19 +81,19 @@ export default function HireFrameForm({
             skills,
             experience,
             githubLink,
+            portfolioLink,
             paymentAddress,
             price,
             fid: farcasterUser?.fid ?? "",
             fName: fName,
+            userPfp: userData.pfp_url,
           }),
         }
       )
       const response = await request.json()
       const pinataIpfsHash = response.success
       if (pinataIpfsHash) {
-        // 2. Generate a frame url with the IPFS URL
         const frameUrl = `${process.env.NEXT_PUBLIC_BASE_API_URL}/api/hire/${pinataIpfsHash}`
-        // 3. Cast the messagen with the frame url
         const data = JSON.stringify({
           signer: farcasterUser.privateKey,
           fid: farcasterUser.fid,
@@ -104,7 +113,6 @@ export default function HireFrameForm({
           }
         )
         const messageJson = await submitMessage.json()
-        console.log("messageJson", messageJson)
         if (submitMessage.status != 200) {
           setLoading(false)
           setCastComplete(true)
@@ -133,8 +141,18 @@ export default function HireFrameForm({
 
   if (castComplete) {
     return (
-      <div className="flex justify-center items-center h-full">
-        <h2 className="text-xl font-bold">{castCompleteMessage}</h2>
+      <div className="flex flex-col h-[400px] justify-center items-center h-full">
+        <div className="w-[300px] h-[300px]">
+          <Image
+            src="/images/validation.gif"
+            alt="Validation"
+            width={0}
+            height={0}
+            sizes="100vw"
+            style={{ width: "100%", height: "auto" }}
+          />
+        </div>
+        <h2 className="text-xl font-bold tr">{castCompleteMessage}</h2>
       </div>
     )
   }

@@ -116,8 +116,18 @@ export default function UploadForm({ farcasterUser }: FormProps) {
 
   if (castComplete) {
     return (
-      <div className="flex justify-center items-center h-full">
-        <h2 className="text-xl font-bold">{castCompleteMessage}</h2>
+      <div className="flex flex-col h-[400px] justify-center items-center h-full">
+        <div className="w-[300px] h-[300px]">
+          <Image
+            src="/images/validation.gif"
+            alt="Validation"
+            width={0}
+            height={0}
+            sizes="100vw"
+            style={{ width: "100%", height: "auto" }}
+          />
+        </div>
+        <h2 className="text-xl font-bold tr">{castCompleteMessage}</h2>
       </div>
     )
   }
