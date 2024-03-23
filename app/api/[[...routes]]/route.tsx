@@ -492,11 +492,9 @@ app.frame("/finish", (c) => {
 
 app.transaction("/buy/:dailyPrice/:paymentAddress/:fid", async (c) => {
   const { inputText } = c
-  if (!inputText) {
-    return new Response("Invalid input", { status: 400 })
-  }
+
   const dailyPrice = c.req.param("dailyPrice")
-  const totalPrice = +dailyPrice * +inputText
+  const totalPrice = +dailyPrice * Number(inputText ?? 1)
 
   const devAddress = c.req.param("paymentAddress")
   const devFid = c.req.param("fid")
