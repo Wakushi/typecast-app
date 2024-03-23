@@ -3,9 +3,13 @@
 import React, { useState, useEffect } from "react"
 import { Loader2 } from "lucide-react"
 import { Button } from "./ui/button"
+import "react-farcaster-embed/dist/styles.css"
+import FrameRenderer from "./frame-renderer"
+import { CastData } from "@/lib/types/cast"
+import { CastEmbed } from "./cast-embed/cast-embed"
 
 export default function Feed({ channel }: any) {
-  const [feed, setFeed]: any = useState([])
+  const [feed, setFeed] = useState<CastData[]>([])
   const [loading, setLoading] = useState(false)
   const [loadingMore, setLoadingMore] = useState(false)
   const [nextPageToken, setNextPageToken] = useState("")
@@ -31,7 +35,7 @@ export default function Feed({ channel }: any) {
           body: data,
         }
       )
-      const feed = await feedData.json()
+      const feed: CastData[] = await feedData.json()
       console.log("Feed", feed)
 
       setFeed((prevFeed: any) => [...prevFeed, ...feed])
@@ -61,8 +65,10 @@ export default function Feed({ channel }: any) {
       ) : (
         <div className="flex flex-col items-center justify-start gap-12 mb-6">
           {feed ? (
-            feed.map((item: any, index: any) => (
-              <div>{item.castAddBody.text}</div>
+            feed.map((cast: CastData, index: any) => (
+              <div key={cast.hash + index}>
+                <CastEmbed cast={cast} />
+              </div>
             ))
           ) : (
             <h1>Failed to fetch Posts</h1>
