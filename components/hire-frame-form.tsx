@@ -69,8 +69,6 @@ export default function HireFrameForm({
         portfolioLink,
       } = values
       const userData = await getUserData(farcasterUser?.fid)
-
-      console.log("client userData", userData)
       const request = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_API_URL}/api/pinata`,
         {
@@ -85,7 +83,7 @@ export default function HireFrameForm({
             portfolioLink,
             paymentAddress,
             price,
-            fid: farcasterUser?.fid ?? "",
+            fid: farcasterUser.fid,
             fName: userData.username,
             userPfp: userData.pfp_url,
           }),
