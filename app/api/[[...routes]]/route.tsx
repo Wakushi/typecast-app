@@ -4,6 +4,7 @@ import { devtools } from "frog/dev"
 import { handle } from "frog/next"
 import { serveStatic } from "frog/serve-static"
 import { Button, Frog, TextInput, parseEther } from "frog"
+import { TYPECAST_CONTRACT_ABI } from "@/lib/contract"
 
 const CONTRACT = (process.env.CONTRACT_ADDRESS as `0x`) || ""
 
@@ -501,7 +502,7 @@ app.transaction("/buy/:dailyPrice/:paymentAddress/:fid", async (c) => {
   const recruiterFid = c.frameData?.fid
 
   return c.contract({
-    abi: [],
+    abi: TYPECAST_CONTRACT_ABI,
     // @ts-ignore
     chainId: "eip155:84532",
     functionName: "hire",
