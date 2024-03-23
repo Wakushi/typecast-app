@@ -18,10 +18,6 @@ export async function POST(req: NextRequest, res: NextResponse) {
     const link = body.link
     const message = body.castMessage
     const parentUrl = body.parentUrl
-    if (!link) {
-      console.log("Must have link")
-      return NextResponse.json({ error: "No link provided" })
-    }
 
     const dataOptions = {
       fid: FID,
