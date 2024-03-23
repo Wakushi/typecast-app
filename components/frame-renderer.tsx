@@ -1,4 +1,5 @@
 "use client"
+import { useFarcaster } from "@/services/user-context"
 import { fallbackFrameContext, FrameUI } from "frames.js/render"
 import { signFrameAction, FarcasterSigner } from "frames.js/render/farcaster"
 import { FrameImageNext } from "frames.js/render/next"
@@ -6,13 +7,10 @@ import { useFrame } from "frames.js/render/use-frame"
 
 interface FrameRendererProps {
   frameUrl: string
-  farcasterSigner?: FarcasterSigner
 }
 
-export default function FrameRenderer({
-  frameUrl,
-  farcasterSigner,
-}: FrameRendererProps) {
+export default function FrameRenderer({ frameUrl }: FrameRendererProps) {
+  const { farcasterUser } = useFarcaster()
   const frameState = useFrame({
     homeframeUrl: frameUrl,
     frameActionProxy: "/frames",
@@ -20,9 +18,8 @@ export default function FrameRenderer({
     frameContext: fallbackFrameContext,
     signerState: {
       hasSigner: true,
-      signer: farcasterSigner,
+      signer: farcasterUser as FarcasterSigner,
       onSignerlessFramePress: () => {
-        // Implement me
         alert(
           "A frame button was pressed without a signer. Perhaps you want to prompt a login"
         )
