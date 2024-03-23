@@ -31,17 +31,11 @@ export async function getFnameFromFid(fid: any): Promise<string> {
   return fname
 }
 
-export async function getUserDataFromFid(fid: any): Promise<any> {
-  const options = {
-    method: "GET",
-    headers: { Authorization: `Bearer ${process.env.PINATA_JWT}` },
-  }
-  const result = await fetch(
-    `https://api.pinata.cloud/v3/farcaster/users/${fid}`,
-    options
+export async function getUserData(fid: number) {
+  const userDataResponse = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_API_URL}/api/user/${fid}`
   )
-  const resultData = await result.json()
-  const userData = resultData.data
+  const userData = await userDataResponse.json()
   return userData
 }
 

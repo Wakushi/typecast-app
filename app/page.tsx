@@ -9,7 +9,6 @@ import { LoginWindow } from "@/components/login-window"
 import UploadForm from "@/components/upload-form"
 import HireFrameForm from "@/components/hire-frame-form"
 import { useFarcaster } from "@/services/user-context"
-import { getFnameFromFid, getUserDataFromFid } from "@/lib/actions"
 
 export default function Page({}: {
   searchParams: Record<string, string>
@@ -20,17 +19,6 @@ export default function Page({}: {
 
   const { farcasterUser, loading, startFarcasterSignerProcess, logout } =
     useFarcaster()
-
-  async function checkData() {
-    const fName = 399074 ? await getFnameFromFid(399074) : ""
-    const userData = await getUserDataFromFid(399074)
-    console.log("client userData", userData)
-    console.log("client fName", fName)
-  }
-
-  useEffect(() => {
-    checkData()
-  }, [])
 
   return (
     <div className="pt-[6rem] px-5 flex flex-col items-center border max-w-[700px] m-auto">

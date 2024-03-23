@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "./ui/textarea"
 import { useState } from "react"
 import { FarcasterUser } from "@/lib/types/farcaster-user"
-import { getFnameFromFid, getUserDataFromFid } from "@/lib/actions"
+import { getUserData } from "@/lib/actions"
 import { Loader2 } from "lucide-react"
 import Image from "next/image"
 
@@ -53,6 +53,9 @@ export default function HireFrameForm({
   })
 
   async function onSubmit(values: z.infer<typeof hireMeFormSchema>) {
+    if (!farcasterUser.fid) {
+      return
+    }
     try {
       setCastCompleteMessage("")
       setLoading(true)
@@ -65,10 +68,8 @@ export default function HireFrameForm({
         price,
         portfolioLink,
       } = values
-      const fName = farcasterUser.fid
-        ? await getFnameFromFid(farcasterUser.fid)
-        : ""
-      const userData = await getUserDataFromFid(farcasterUser.fid)
+      const userData = await getUserData(farcasterUser?.fid)
+
       console.log("client userData", userData)
       const request = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_API_URL}/api/pinata`,
@@ -85,7 +86,7 @@ export default function HireFrameForm({
             paymentAddress,
             price,
             fid: farcasterUser?.fid ?? "",
-            fName: fName,
+            fName: userData.username,
             userPfp: userData.pfp_url,
           }),
         }
