@@ -82,8 +82,9 @@
   max-width: 500px;
 }
 
-.farcaster-embed-metadata .main-metadata {
-  height: 48px !important;
+.farcaster-embed-metadata.main-metadata {
+  min-height: 48px !important;
+  max-height: 48px !important;
 }
 
 .farcaster-embed-avatar-link {

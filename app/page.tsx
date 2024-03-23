@@ -14,7 +14,7 @@ export default function Page({}: {
   //   useFarcasterIdentity()
 
   return (
-    <div className="flex flex-col min-h-screen w-full sm:px-0 px-3 justify-center items-center gap-6 mb-6">
+    <div className="pt-20">
       <Feed channel={channel} setChannel={setChannel} />
     </div>
   )
