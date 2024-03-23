@@ -2,13 +2,13 @@
 import { useState } from "react"
 import Feed from "@/components/feed"
 import "./globals.css"
-import { useFarcasterIdentity } from "@/lib/use-farcaster-identity"
 import { FarcasterUser } from "@/lib/types/farcaster-user"
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { LoginWindow } from "@/components/login-window"
 import UploadForm from "@/components/upload-form"
 import HireFrameForm from "@/components/hire-frame-form"
+import { useFarcaster } from "@/services/user-context"
 
 export default function Page({}: {
   searchParams: Record<string, string>
@@ -18,7 +18,7 @@ export default function Page({}: {
   )
 
   const { farcasterUser, loading, startFarcasterSignerProcess, logout } =
-    useFarcasterIdentity()
+    useFarcaster()
 
   return (
     <div className="pt-[6rem] px-5 flex flex-col items-center border max-w-[700px] m-auto">
@@ -55,7 +55,7 @@ export default function Page({}: {
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px] max-w-[375px] max-h-[100vh] rounded overflow-auto">
-            {farcasterUser?.status !== "approved" ? (
+            {farcasterUser?.status === "approved" ? (
               <HireFrameForm farcasterUser={farcasterUser as FarcasterUser} />
             ) : (
               <LoginWindow

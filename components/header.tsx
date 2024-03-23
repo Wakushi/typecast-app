@@ -4,13 +4,13 @@ import { Button } from "./ui/button"
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import { tilt_neon } from "@/styles/fonts"
 import { LoginWindow } from "./login-window"
-import { useFarcasterIdentity } from "@/lib/use-farcaster-identity"
 import { useEffect, useState } from "react"
 import { getFnameFromFid } from "@/lib/actions"
+import { useFarcaster } from "@/services/user-context"
 
 export default function Header() {
   const { farcasterUser, loading, startFarcasterSignerProcess, logout } =
-    useFarcasterIdentity()
+    useFarcaster()
   const [username, setUsername] = useState<string>("")
 
   useEffect(() => {

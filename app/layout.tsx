@@ -1,5 +1,6 @@
 import "./globals.css"
 import Header from "@/components/header"
+import { FarcasterProvider } from "@/services/user-context"
 import { inter } from "@/styles/fonts"
 
 export default function RootLayout({
@@ -10,8 +11,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} relative`}>
-        <Header />
-        {children}
+        <FarcasterProvider>
+          <Header />
+          {children}
+        </FarcasterProvider>
       </body>
     </html>
   )
