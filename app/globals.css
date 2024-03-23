@@ -79,7 +79,7 @@
 
 .farcaster-embed-container {
   color: #ffff;
-  max-width: 500px;
+  max-width: 600px;
 }
 
 .farcaster-embed-metadata.main-metadata {
@@ -95,6 +95,17 @@
   width: 100%;
   height: 100%;
 }
+
+.farcaster-embed-image-container {
+  justify-content: center;
+}
+
 .custom-frame {
   margin: 1rem 0 !important;
+}
+
+@media (min-width: 768px) {
+  .farcaster-embed-container {
+    width: 600px !important;
+  }
 }

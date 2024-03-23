@@ -63,7 +63,7 @@ export default function Feed({ channel }: any) {
       {loading ? (
         <Loader2 className="h-16 w-16 animate-spin" />
       ) : (
-        <div className="flex flex-col items-center justify-start gap-12 mb-6">
+        <div className="flex flex-col items-center justify-start gap-8 mb-6">
           {feed ? (
             feed.map((cast: CastData, index: any) => (
               <div key={cast.hash + index}>
