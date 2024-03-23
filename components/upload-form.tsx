@@ -50,7 +50,6 @@ export default function UploadForm({ farcasterUser }: FormProps) {
   async function fileChangeHandler(event: any) {
     setImageLoading(true)
     const file = event.target.files[0]
-    console.log(file)
     setSelecteFile(file)
     setImageLoading(false)
   }
@@ -90,7 +89,6 @@ export default function UploadForm({ farcasterUser }: FormProps) {
         }
       )
       const messageJson = await submitMessage.json()
-      console.log(messageJson)
       if (submitMessage.status != 200) {
         setLoading(false)
         setCastComplete(true)
@@ -186,7 +184,7 @@ export default function UploadForm({ farcasterUser }: FormProps) {
                   </FormControl>
                   <SelectContent>
                     {channels.map((channel: Channel) => (
-                      <SelectItem value={channel.url}>
+                      <SelectItem key={channel.url} value={channel.url}>
                         {channel.name}
                       </SelectItem>
                     ))}
