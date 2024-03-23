@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+import { useState, useEffect } from "react"
 import { Loader2 } from "lucide-react"
 import { Button } from "./ui/button"
 import { CastData } from "@/lib/types/cast"
@@ -34,8 +34,11 @@ export default function Feed({ channel }: any) {
         }
       )
       const feed: CastData[] = await feedData.json()
-
-      setFeed((prevFeed: any) => [...prevFeed, ...feed])
+      if (initialLoad) {
+        setFeed(feed)
+      } else {
+        setFeed((prevFeed: any) => [...prevFeed, ...feed])
+      }
       setNextPageToken(feed[0].pageToken || "")
       setLoading(false)
       setLoadingMore(false)
