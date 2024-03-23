@@ -50,12 +50,18 @@ export function VideoPlayerClient({
       })
 
     return () => {
-      document.head.removeChild(
-        document.head.querySelector(`script[src="${mediaChrome}"]`)
+      const mediaChromeElement = document.head.querySelector(
+        `script[src="${mediaChrome}"]`
       )
-      document.head.removeChild(
-        document.head.querySelector(`script[src="${hlsVideoElement}"]`)
+      if (mediaChromeElement) {
+        document.head.removeChild(mediaChromeElement)
+      }
+      const hlsVideoElementElement = document.head.querySelector(
+        `script[src="${hlsVideoElement}"]`
       )
+      if (hlsVideoElementElement) {
+        document.head.removeChild(hlsVideoElementElement)
+      }
     }
   }, [source, poster, aspectRatio])
 
