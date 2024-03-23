@@ -25,12 +25,14 @@ export type CastUrl = {
     title?: string
     url?: string
     useLargeImage?: boolean
+    frame?: any
   }
 }
 
 export type CastData = {
   hash?: string
   threadHash?: string
+  pageToken?: string
   parentSource?: {
     type?: string
     url?: string

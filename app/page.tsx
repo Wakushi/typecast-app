@@ -2,7 +2,6 @@
 import { useState } from "react"
 import Feed from "@/components/feed"
 import "./globals.css"
-import FrameRenderer from "@/components/frame-renderer"
 
 export default function Page({}: {
   searchParams: Record<string, string>

@@ -9,6 +9,8 @@ import {
 import { CastImages } from "./cast-images"
 import { CastVideos } from "./cast-video"
 import { CastData } from "@/lib/types/cast"
+import FrameRenderer from "../frame-renderer"
+import "../../styles/farcaster-embed.styles.css"
 
 const linkifyOptions = {
   className: "farcaster-embed-body-link",
@@ -52,35 +54,25 @@ export function CastEmbed({
   cast: CastData
   client?: boolean
 }) {
-  const author = cast.author
-  const profileUrl = `https://warpcast.com/~/profiles/${author.fid}`
-  const publishedAt = new Date(cast.timestamp)
+  const author = cast?.author
+  const profileUrl = `https://warpcast.com/~/profiles/${author?.fid}`
+  const publishedAt = new Date(cast?.timestamp ?? 0)
   const timestamp = publishedAt.toLocaleString("en-US", timestampOptions)
-  const warpcastUrl = `https://warpcast.com/${author.username}/${cast.hash}`
-  const replies = cast.replies && cast.replies.count
-  const likes = cast.reactions && cast.reactions.count
-  const recasts = cast.combinedRecastCount
-    ? cast.combinedRecastCount
-    : cast.recasts.count
-  const watches = cast.watches && cast.watches.count
-  const images = cast.embeds && cast.embeds.images
-  const hasImages = images && images.length > 0
-  const hasVideos =
-    cast.embeds && cast.embeds.videos && cast.embeds.videos.length > 0
-  const videos = cast.embeds && cast.embeds.videos
-  const hasUrls = cast.embeds && cast.embeds.urls && cast.embeds.urls.length > 0
-  const urls = cast.embeds && cast.embeds.urls
-  const lastUrl = (urls && urls[urls.length - 1]?.openGraph?.url) || ""
-  const hasCastEmbeds = cast.embeds && cast.embeds.casts
-  const quoteCasts = cast.embeds && cast.embeds.casts
+  const warpcastUrl = `https://warpcast.com/${author?.username}/${cast?.hash}`
+  const replies = cast?.replies && cast?.replies.count
+  const likes = cast?.reactions && cast?.reactions.count
+  const recasts = cast?.combinedRecastCount
+    ? cast?.combinedRecastCount
+    : cast?.recasts?.count
+  const watches = cast?.watches && cast?.watches.count
 
   return (
     <div className="not-prose farcaster-embed-container">
-      <div className="farcaster-embed-metadata">
+      <div className="farcaster-embed-metadata main-metadata">
         <a href={profileUrl} className="farcaster-embed-avatar-link">
           <img
-            src={author.pfp.url}
-            alt={`@${author.username}`}
+            src={author?.pfp?.url}
+            alt={`@${author?.username}`}
             width={48}
             height={48}
             className="farcaster-embed-author-avatar"
@@ -88,23 +80,127 @@ export function CastEmbed({
         </a>
         <div className="farcaster-embed-author">
           <p className="farcaster-embed-author-display-name">
-            {author.displayName}
+            {author?.displayName}
           </p>
-          <p className="farcaster-embed-author-username">@{author.username}</p>
+          <p className="farcaster-embed-author-username">@{author?.username}</p>
         </div>
         <div className="farcaster-embed-timestamp">
           <p>{timestamp}</p>
         </div>
       </div>
+      <CastEmbedBody cast={cast} />
+      {cast?.tags?.length && cast?.tags?.length > 0 && (
+        <div>
+          <div className="farcaster-embed-channel">
+            {cast?.tags[0].imageUrl && (
+              <img
+                src={cast?.tags[0].imageUrl}
+                alt={cast?.tags[0].name}
+                width={16}
+                height={16}
+                className="farcaster-embed-channel-avatar"
+              />
+            )}
+            {cast?.tags[0].name && (
+              <p className="farcaster-embed-channel-name">
+                {cast?.tags[0].name}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+      <div className="farcaster-embed-stats">
+        <ul>
+          <li>
+            <a
+              className="farcaster-embed-stats-link"
+              href={warpcastUrl}
+              target="_blank"
+            >
+              <ReplyIcon />
+              <span>{replies?.toLocaleString("en-US")}</span>
+            </a>
+          </li>
+          <li>
+            <a
+              className="farcaster-embed-stats-link"
+              href={warpcastUrl}
+              target="_blank"
+            >
+              <RecastIcon />
+              <span>{recasts?.toLocaleString("en-US")}</span>
+            </a>
+          </li>
+          <li>
+            <a
+              className="farcaster-embed-stats-link"
+              href={warpcastUrl}
+              target="_blank"
+            >
+              <LikeIcon />
+              <span>{likes?.toLocaleString("en-US")}</span>
+            </a>
+          </li>
+          <li>
+            <a
+              className="farcaster-embed-stats-link"
+              href={warpcastUrl}
+              target="_blank"
+            >
+              <BookmarkIcon />
+              <span>{watches?.toLocaleString("en-US")}</span>
+            </a>
+          </li>
+        </ul>
+        <div className="farcaster-embed-warpcast-icon">
+          <a
+            href={warpcastUrl}
+            title="Show on Warpcast"
+            target="_blank"
+            className="farcaster-embed-warpcast-link"
+          >
+            <WarpcastIcon />
+          </a>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function CastEmbedBody({ cast, client }: { cast: CastData; client?: boolean }) {
+  if (
+    cast?.embeds &&
+    cast?.embeds?.urls &&
+    cast?.embeds?.urls?.length > 0 &&
+    cast?.embeds?.urls[0]?.openGraph?.url &&
+    cast?.embeds?.urls[0]?.openGraph?.frame
+  ) {
+    return <FrameRenderer frameUrl={cast?.embeds?.urls[0]?.openGraph?.url} />
+  } else {
+    const images = cast?.embeds && cast?.embeds.images
+    const urls = cast?.embeds && cast?.embeds.urls
+    const hasImages = images && images.length > 0
+    const hasVideos =
+      cast?.embeds && cast?.embeds.videos && cast?.embeds.videos.length > 0
+    const videos = cast?.embeds && cast?.embeds.videos
+    const hasUrls =
+      cast?.embeds && cast?.embeds.urls && cast?.embeds.urls.length > 0
+    const lastUrl = (urls && urls[urls.length - 1]?.openGraph?.url) || ""
+    const hasCastEmbeds = cast?.embeds && cast?.embeds.casts
+    const quoteCasts = cast?.embeds && cast?.embeds.casts
+
+    return (
       <div className="farcaster-embed-body">
         <Linkify as="p" options={linkifyOptions}>
-          {stripLastEmbedUrlFromCastBody(cast.text, lastUrl)}
+          {stripLastEmbedUrlFromCastBody(cast?.text ?? "", lastUrl)}
         </Linkify>
         {hasImages && <CastImages images={images} />}
-        {hasVideos && <CastVideos videos={videos} client={client} />}
+        {hasVideos && videos && client && (
+          <CastVideos videos={videos} client={client} />
+        )}
         {hasUrls && (
           <div className="farcaster-embed-urls-container">
-            {urls.map((item, index) => {
+            {urls?.map((item, index) => {
               const { description, domain, image, title, url, useLargeImage } =
                 item.openGraph || {}
               const isTwitter =
@@ -180,8 +276,8 @@ export function CastEmbed({
         )}
         {hasCastEmbeds && (
           <div className="farcaster-embed-quote-cast-container">
-            {quoteCasts.map((quoteCast: CastData) => {
-              const qcPublishedAt = new Date(quoteCast.timestamp)
+            {quoteCasts?.map((quoteCast: CastData) => {
+              const qcPublishedAt = new Date(quoteCast?.timestamp ?? 0)
               const qcTimestamp = qcPublishedAt.toLocaleString(
                 "en-US",
                 timestampOptions
@@ -205,8 +301,8 @@ export function CastEmbed({
                   <div className="farcaster-embed-metadata">
                     <div className="farcaster-embed-avatar-link">
                       <img
-                        src={quoteCast.author.pfp.url}
-                        alt={`@${quoteCast.author.username}`}
+                        src={quoteCast?.author?.pfp?.url}
+                        alt={`@${quoteCast.author?.username}`}
                         width={20}
                         height={20}
                         className="farcaster-embed-author-avatar"
@@ -214,10 +310,10 @@ export function CastEmbed({
                     </div>
                     <div className="farcaster-embed-author">
                       <p className="farcaster-embed-author-display-name">
-                        {quoteCast.author.displayName}
+                        {quoteCast.author?.displayName}
                       </p>
                       <p className="farcaster-embed-author-username">
-                        @{quoteCast.author.username}
+                        @{quoteCast.author?.username}
                       </p>
                     </div>
                     <div className="farcaster-embed-timestamp">
@@ -228,8 +324,12 @@ export function CastEmbed({
                     <Linkify as="p" options={linkifyOptions}>
                       {quoteCast.text}
                     </Linkify>
-                    {qcHasImages && <CastImages images={qcImages} />}
-                    {qcHasVideos && <CastVideos videos={qcVideos} />}
+                    {qcHasImages && qcImages && (
+                      <CastImages images={qcImages} />
+                    )}
+                    {qcHasVideos && qcVideos && (
+                      <CastVideos videos={qcVideos} />
+                    )}
                   </div>
                 </div>
               )
@@ -237,80 +337,6 @@ export function CastEmbed({
           </div>
         )}
       </div>
-      {cast.tags.length > 0 && (
-        <div>
-          <div className="farcaster-embed-channel">
-            {cast.tags[0].imageUrl && (
-              <img
-                src={cast.tags[0].imageUrl}
-                alt={cast.tags[0].name}
-                width={16}
-                height={16}
-                className="farcaster-embed-channel-avatar"
-              />
-            )}
-            {cast.tags[0].name && (
-              <p className="farcaster-embed-channel-name">
-                {cast.tags[0].name}
-              </p>
-            )}
-          </div>
-        </div>
-      )}
-      <div className="farcaster-embed-stats">
-        <ul>
-          <li>
-            <a
-              className="farcaster-embed-stats-link"
-              href={warpcastUrl}
-              target="_blank"
-            >
-              <ReplyIcon />
-              <span>{replies.toLocaleString("en-US")}</span>
-            </a>
-          </li>
-          <li>
-            <a
-              className="farcaster-embed-stats-link"
-              href={warpcastUrl}
-              target="_blank"
-            >
-              <RecastIcon />
-              <span>{recasts.toLocaleString("en-US")}</span>
-            </a>
-          </li>
-          <li>
-            <a
-              className="farcaster-embed-stats-link"
-              href={warpcastUrl}
-              target="_blank"
-            >
-              <LikeIcon />
-              <span>{likes.toLocaleString("en-US")}</span>
-            </a>
-          </li>
-          <li>
-            <a
-              className="farcaster-embed-stats-link"
-              href={warpcastUrl}
-              target="_blank"
-            >
-              <BookmarkIcon />
-              <span>{watches.toLocaleString("en-US")}</span>
-            </a>
-          </li>
-        </ul>
-        <div className="farcaster-embed-warpcast-icon">
-          <a
-            href={warpcastUrl}
-            title="Show on Warpcast"
-            target="_blank"
-            className="farcaster-embed-warpcast-link"
-          >
-            <WarpcastIcon />
-          </a>
-        </div>
-      </div>
-    </div>
-  )
+    )
+  }
 }

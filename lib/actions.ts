@@ -1,5 +1,3 @@
-import { JSDOM } from "jsdom"
-
 export async function cronFeed(channel: any, nextPage: any) {
   try {
     const result = await fetch(
@@ -31,27 +29,6 @@ export async function getFnameFromFid(fid: any): Promise<string> {
   const resultData = await result.json()
   const fname = resultData?.data?.userDataBody?.value || fid
   return fname
-}
-
-async function hasEmbededFrame(url: string): Promise<boolean> {
-  try {
-    const response = await fetch(url)
-    const text = await response.text()
-    const dom = new JSDOM(text)
-    const metas = dom.window.document.head.getElementsByTagName("meta")
-
-    for (let i = 0; i < metas.length; i++) {
-      const property = metas[i].getAttribute("property")
-      if (property === "fc:frame") {
-        return true
-      }
-    }
-
-    return false
-  } catch (error) {
-    console.error("Error fetching or parsing URL:", error)
-    return false
-  }
 }
 
 export const getCast = async (username: string, hash: string) => {

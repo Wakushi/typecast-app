@@ -3,8 +3,6 @@
 import React, { useState, useEffect } from "react"
 import { Loader2 } from "lucide-react"
 import { Button } from "./ui/button"
-import "react-farcaster-embed/dist/styles.css"
-import FrameRenderer from "./frame-renderer"
 import { CastData } from "@/lib/types/cast"
 import { CastEmbed } from "./cast-embed/cast-embed"
 
@@ -36,10 +34,9 @@ export default function Feed({ channel }: any) {
         }
       )
       const feed: CastData[] = await feedData.json()
-      console.log("Feed", feed)
 
       setFeed((prevFeed: any) => [...prevFeed, ...feed])
-      setNextPageToken(feed[0].pageToken)
+      setNextPageToken(feed[0].pageToken || "")
       setLoading(false)
       setLoadingMore(false)
     } catch (error) {

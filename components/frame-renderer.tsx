@@ -32,16 +32,16 @@ export default function FrameRenderer({
   })
 
   return (
-    <div className="w-[400px]">
+    <div className="custom-frame">
       <FrameUI
         frameState={frameState}
         theme={{
-          bg: "purple",
+          bg: "transparent",
           buttonBg: "#fff",
-          buttonBorderColor: "#ccc",
+          buttonBorderColor: "#111",
           buttonHoverBg: "#efefef",
           buttonColor: "#444",
-          buttonRadius: "4",
+          buttonRadius: "5",
         }}
         FrameImage={FrameImageNext}
       />
