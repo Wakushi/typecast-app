@@ -97,7 +97,7 @@ export default function HireFrameForm({
           signer: farcasterUser.privateKey,
           fid: farcasterUser.fid,
           link: frameUrl,
-          castMessage: values.cast + " " + frameUrl,
+          castMessage: cast + " " + frameUrl,
           parentUrl:
             "chain://eip155:1/erc721:0x7dd4e31f1530ac682c8ea4d8016e95773e08d8b0",
         })

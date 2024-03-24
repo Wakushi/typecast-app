@@ -1,5 +1,10 @@
 export const TYPECAST_CONTRACT_ABI = [
   {
+    type: "constructor",
+    inputs: [{ name: "_priceFeed", type: "address", internalType: "address" }],
+    stateMutability: "nonpayable",
+  },
+  {
     type: "function",
     name: "FUND_WITHDRAWAL_DELAY",
     inputs: [],
@@ -19,6 +24,13 @@ export const TYPECAST_CONTRACT_ABI = [
     inputs: [{ name: "_recruiter", type: "address", internalType: "address" }],
     outputs: [],
     stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "getEthPrice",
+    inputs: [],
+    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
+    stateMutability: "view",
   },
   {
     type: "function",

@@ -5,6 +5,7 @@ import { handle } from "frog/next"
 import { serveStatic } from "frog/serve-static"
 import { Button, Frog, TextInput, parseEther } from "frog"
 import { TYPECAST_CONTRACT_ABI } from "@/lib/contract"
+import { getEthPriceInUSD } from "@/lib/actions"
 
 const CONTRACT = (process.env.CONTRACT_ADDRESS as `0x`) || ""
 
@@ -495,7 +496,10 @@ app.transaction("/buy/:dailyPrice/:paymentAddress/:fid", async (c) => {
   const { inputText } = c
 
   const dailyPrice = c.req.param("dailyPrice")
-  const totalPrice = +dailyPrice * Number(inputText ?? 1)
+  const totalPriceInUsd = +dailyPrice * Number(inputText ?? 1)
+
+  const ethPriceInUsd = await getEthPriceInUSD()
+  const totalPriceInEth = totalPriceInUsd / ethPriceInUsd
 
   const devAddress = c.req.param("paymentAddress")
   const devFid = c.req.param("fid")
@@ -508,7 +512,7 @@ app.transaction("/buy/:dailyPrice/:paymentAddress/:fid", async (c) => {
     functionName: "hire",
     args: [devAddress, devFid, recruiterFid],
     to: CONTRACT,
-    value: parseEther(`${totalPrice}`),
+    value: parseEther(`${totalPriceInEth}`),
   })
 })
 

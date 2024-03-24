@@ -39,6 +39,14 @@ export async function getUserData(fid: number) {
   return userData
 }
 
+export async function getEthPriceInUSD() {
+  const priceResponse = await fetch(
+    `${process.env.NEXT_PUBLIC_GATEWAY}/api/price`
+  )
+  const price = await priceResponse.json()
+  return price
+}
+
 export const getCast = async (username: string, hash: string) => {
   try {
     const res = await fetch(
