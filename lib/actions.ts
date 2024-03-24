@@ -47,6 +47,19 @@ export async function getEthPriceInUSD() {
   return price
 }
 
+export async function getUserHiringInfo(ipfsHash: string) {
+  try {
+    const hireData = await fetch(
+      `https://${process.env.NEXT_PUBLIC_GATEWAY}/ipfs/${ipfsHash}`
+    )
+    const data = await hireData.json()
+    return data
+  } catch (e) {
+    console.error(e)
+    return null
+  }
+}
+
 export const getCast = async (username: string, hash: string) => {
   try {
     const res = await fetch(
@@ -70,4 +83,20 @@ export const getCast = async (username: string, hash: string) => {
   } catch (e) {
     throw new Error("Unable to fetch cast.")
   }
+}
+
+export async function unpinUserHiringInfo(ipfsHash: string) {
+  const result = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_API_URL}/api/pinata`,
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ipfsHash,
+      }),
+    }
+  )
+  return result
 }

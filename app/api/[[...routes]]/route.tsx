@@ -5,7 +5,11 @@ import { handle } from "frog/next"
 import { serveStatic } from "frog/serve-static"
 import { Button, Frog, TextInput, parseEther } from "frog"
 import { TYPECAST_CONTRACT_ABI } from "@/lib/contract"
-import { getEthPriceInUSD } from "@/lib/actions"
+import {
+  getEthPriceInUSD,
+  getUserHiringInfo,
+  unpinUserHiringInfo,
+} from "@/lib/actions"
 
 const CONTRACT = (process.env.CONTRACT_ADDRESS as `0x`) || ""
 
@@ -16,23 +20,8 @@ const app = new Frog({
 
 app.frame("/hire/:ipfsHash", async (c) => {
   const ipfsHash = c.req.param("ipfsHash")
-  const hireData = await fetch(
-    `https://${process.env.NEXT_PUBLIC_GATEWAY}/ipfs/${ipfsHash}`
-  )
-  const data = await hireData.json()
-  const {
-    skills,
-    experience,
-    githubLink,
-    portfolioLink,
-    price,
-    available,
-    fName,
-    userPfp,
-    fid,
-    paymentAddress,
-  } = data
-  if (!available) {
+  const data = await getUserHiringInfo(ipfsHash)
+  if (!data) {
     return c.res({
       action: "/finish",
       image: (
@@ -147,13 +136,11 @@ app.frame("/hire/:ipfsHash", async (c) => {
                       objectFit: "cover",
                     }}
                     src={
-                      userPfp ||
-                      "https://logowik.com/content/uploads/images/ethereum-eth-icon9411.logowik.com.webp"
+                      "https://s3.amazonaws.com/pix.iemoji.com/images/emoji/apple/ios-12/256/disappointed-face.png"
                     }
                     alt="profile"
                   />
                 </div>
-                <h3>{fName}</h3>
               </div>
               <h2
                 style={{
@@ -170,14 +157,24 @@ app.frame("/hire/:ipfsHash", async (c) => {
         </div>
       ),
       intents: [
-        githubLink ? <Button.Link href={githubLink}>Github</Button.Link> : null,
-        portfolioLink ? (
-          <Button.Link href={portfolioLink}>Portfolio</Button.Link>
-        ) : null,
+        <Button.Link href="https://typecast-app.vercel.app/">
+          See more on TypeCast
+        </Button.Link>,
       ],
       title: "Hire me",
     })
   }
+  const {
+    skills,
+    experience,
+    githubLink,
+    portfolioLink,
+    price,
+    fName,
+    userPfp,
+    fid,
+    paymentAddress,
+  } = data
   return c.res({
     action: "/finish",
     image: (
@@ -381,6 +378,14 @@ app.frame("/hire/:ipfsHash", async (c) => {
 })
 
 app.frame("/finish", (c) => {
+  const { frameData } = c
+  if (frameData) {
+    const { url } = frameData
+    const ipfsHash = url.split("/").pop()
+    if (ipfsHash) {
+      unpinUserHiringInfo(ipfsHash)
+    }
+  }
   return c.res({
     image: (
       <div

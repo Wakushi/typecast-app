@@ -36,11 +36,15 @@ const formSchema = z.object({
   parentUrl: z.string(), // channel url
 })
 
-interface FormProps {
+interface UploadFormProps {
   farcasterUser: FarcasterUser
+  refetchData: () => void
 }
 
-export default function UploadForm({ farcasterUser }: FormProps) {
+export default function UploadForm({
+  farcasterUser,
+  refetchData,
+}: UploadFormProps) {
   const [selectedFile, setSelecteFile] = useState()
   const [imageLoading, setImageLoading] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -94,6 +98,7 @@ export default function UploadForm({ farcasterUser }: FormProps) {
         setCastComplete(true)
         setCastCompleteMessage("Problem sending cast")
       }
+      refetchData()
       setLoading(false)
       setCastComplete(true)
       setCastCompleteMessage("Cast Sent!")

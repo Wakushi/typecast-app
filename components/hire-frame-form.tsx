@@ -32,11 +32,15 @@ const hireMeFormSchema = z.object({
 
 type HireMeFormData = z.infer<typeof hireMeFormSchema>
 
+interface HireFrameFormProps {
+  farcasterUser: FarcasterUser
+  refetchData: () => void
+}
+
 export default function HireFrameForm({
   farcasterUser,
-}: {
-  farcasterUser: FarcasterUser
-}) {
+  refetchData,
+}: HireFrameFormProps) {
   const [loading, setLoading] = useState(false)
   const [castComplete, setCastComplete] = useState(false)
   const [castCompleteMessage, setCastCompleteMessage] = useState("")
@@ -117,6 +121,7 @@ export default function HireFrameForm({
           setCastComplete(true)
           setCastCompleteMessage("Problem sending cast")
         }
+        refetchData()
         setLoading(false)
         setCastComplete(true)
         setCastCompleteMessage("Cast Sent!")

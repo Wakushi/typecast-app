@@ -10,7 +10,7 @@ const publicClient = createPublicClient({
   transport: http(process.env.ALCHEMY_URL),
 })
 
-export async function GET() {
+export async function GET(): Promise<any> {
   try {
     const priceInUSD = await publicClient.readContract({
       address: CONTRACT,

@@ -1,63 +1,23 @@
 "use client"
 
-import { useState, useEffect } from "react"
 import { Loader2 } from "lucide-react"
 import { Button } from "./ui/button"
 import { CastData } from "@/lib/types/cast"
 import { CastEmbed } from "./cast-embed/cast-embed"
 
-export default function Feed({ channel }: any) {
-  const [feed, setFeed] = useState<CastData[]>([])
-  const [loading, setLoading] = useState(false)
-  const [loadingMore, setLoadingMore] = useState(false)
-  const [nextPageToken, setNextPageToken] = useState("")
+interface FeedProps {
+  loading: boolean
+  feed: CastData[]
+  loadingMore: boolean
+  refetchData: () => void
+}
 
-  async function fetchData(nextPage: any, initialLoad: boolean) {
-    try {
-      if (initialLoad) {
-        setLoading(true)
-      } else {
-        setLoadingMore(true)
-      }
-      const data = JSON.stringify({
-        channel: channel,
-        nextPage: nextPage,
-      })
-      const feedData = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_API_URL}/api/feed`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: data,
-        }
-      )
-      const feed: CastData[] = await feedData.json()
-      if (initialLoad) {
-        setFeed(feed)
-      } else {
-        setFeed((prevFeed: any) => [...prevFeed, ...feed])
-      }
-      setNextPageToken(feed[0].pageToken || "")
-      setLoading(false)
-      setLoadingMore(false)
-    } catch (error) {
-      console.log(error)
-      setLoading(false)
-      setLoadingMore(false)
-    }
-  }
-
-  function refetchData() {
-    fetchData(nextPageToken, false)
-  }
-
-  useEffect(() => {
-    setFeed([])
-    fetchData("", true)
-  }, [channel])
-
+export default function Feed({
+  loading,
+  feed,
+  loadingMore,
+  refetchData,
+}: FeedProps) {
   return (
     <div className="mt-4 flex min-h-screen flex-col items-center justify-start">
       {loading ? (

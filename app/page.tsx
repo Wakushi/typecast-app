@@ -9,16 +9,66 @@ import { LoginWindow } from "@/components/login-window"
 import UploadForm from "@/components/upload-form"
 import HireFrameForm from "@/components/hire-frame-form"
 import { useFarcaster } from "@/services/user-context"
+import { CastData } from "@/lib/types/cast"
 
 export default function Page({}: {
   searchParams: Record<string, string>
 }): JSX.Element {
-  const [channel, setChannel] = useState(
+  const DEV_CHANNEL =
     "chain://eip155:1/erc721:0x7dd4e31f1530ac682c8ea4d8016e95773e08d8b0"
-  )
 
   const { farcasterUser, loading, startFarcasterSignerProcess, logout } =
     useFarcaster()
+
+  const [feed, setFeed] = useState<CastData[]>([])
+  const [loadingFeed, setLoadingFeed] = useState(true)
+  const [loadingMore, setLoadingMore] = useState(false)
+  const [nextPageToken, setNextPageToken] = useState("")
+
+  async function fetchData(nextPage: any, initialLoad: boolean) {
+    try {
+      if (initialLoad) {
+        setLoadingFeed(true)
+      } else {
+        setLoadingMore(true)
+      }
+      const data = JSON.stringify({
+        channel: DEV_CHANNEL,
+        nextPage: nextPage,
+      })
+      const feedData = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_API_URL}/api/feed`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: data,
+        }
+      )
+      const feed: CastData[] = await feedData.json()
+      if (initialLoad) {
+        setFeed(feed)
+      } else {
+        setFeed((prevFeed: any) => [...prevFeed, ...feed])
+      }
+      setNextPageToken(feed[0].pageToken || "")
+      setLoadingFeed(false)
+      setLoadingMore(false)
+    } catch (error) {
+      console.log(error)
+      setLoadingFeed(false)
+      setLoadingMore(false)
+    }
+  }
+
+  function refetchData() {
+    fetchData(nextPageToken, false)
+  }
+
+  useEffect(() => {
+    fetchData("", true)
+  }, [])
 
   return (
     <div className="pt-[6rem] px-5 flex flex-col items-center border max-w-[700px] m-auto">
@@ -34,7 +84,10 @@ export default function Page({}: {
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px] max-w-[375px]">
             {farcasterUser?.status === "approved" ? (
-              <UploadForm farcasterUser={farcasterUser as FarcasterUser} />
+              <UploadForm
+                farcasterUser={farcasterUser as FarcasterUser}
+                refetchData={refetchData}
+              />
             ) : (
               <LoginWindow
                 farcasterUser={farcasterUser}
@@ -56,7 +109,10 @@ export default function Page({}: {
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px] max-w-[375px] max-h-[100vh] rounded overflow-auto">
             {farcasterUser?.status === "approved" ? (
-              <HireFrameForm farcasterUser={farcasterUser as FarcasterUser} />
+              <HireFrameForm
+                farcasterUser={farcasterUser as FarcasterUser}
+                refetchData={refetchData}
+              />
             ) : (
               <LoginWindow
                 farcasterUser={farcasterUser}
@@ -68,7 +124,12 @@ export default function Page({}: {
           </DialogContent>
         </Dialog>
       </div>
-      <Feed channel={channel} setChannel={setChannel} />
+      <Feed
+        loading={loadingFeed}
+        feed={feed}
+        loadingMore={loadingMore}
+        refetchData={refetchData}
+      />
     </div>
   )
 }
