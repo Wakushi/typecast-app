@@ -41,7 +41,7 @@ export async function getUserData(fid: number) {
 
 export async function getEthPriceInUSD() {
   const priceResponse = await fetch(
-    `${process.env.NEXT_PUBLIC_GATEWAY}/api/price`
+    `${process.env.NEXT_PUBLIC_BASE_API_URL}/api/price`
   )
   const price = await priceResponse.json()
   return price
