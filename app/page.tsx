@@ -32,7 +32,7 @@ export default function Page({}: {
       }
       const data = JSON.stringify({
         channel: DEV_CHANNEL,
-        nextPage: nextPage,
+        nextPage: initialLoad ? "" : nextPage,
       })
       const feedData = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_API_URL}/api/feed`,

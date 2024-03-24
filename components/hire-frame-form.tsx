@@ -126,7 +126,7 @@ export default function HireFrameForm({
         setCastCompleteMessage("Cast Sent!")
         setTimeout(() => {
           refetchData(true)
-        }, 1000)
+        }, 2000)
       }
     } catch (error) {
       console.log(error)
