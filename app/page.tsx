@@ -159,10 +159,12 @@ export default function Page({}: {
       {isScrolled && (
         <div className="flex flex-col gap-2 lg:gap-6 lg:bottom-20 fixed bottom-4 right-4 lg:right-20">
           <Dialog>
-            <DialogTrigger asChild>
-              <div className="cursor-pointer rounded-[50%] lg:rounded-[20px] flex items-center justify-center opacity-70 lg:opacity-100 hover:opacity-100 bg-slate-800 w-[50px] lg:w-[200px] h-[50px] shadow-2xl">
-                <MdOutlineWorkOutline className="text-white text-3xl lg:hidden" />
-                <span className="hidden lg:block font-bold">Create a post</span>
+            <DialogTrigger>
+              <div className="cursor-pointer rounded-[50%] lg:rounded-[20px] flex items-center justify-center opacity-70 lg:opacity-100 hover:opacity-100 bg-white  w-[50px] lg:w-[200px] h-[50px] shadow-2xl">
+                <SiGooglemessages className="text-slate-900 text-3xl lg:hidden" />
+                <span className="hidden lg:block font-bold text-slate-900">
+                  Create a post
+                </span>
               </div>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px] max-w-[375px]">
@@ -183,10 +185,10 @@ export default function Page({}: {
             </DialogContent>
           </Dialog>
           <Dialog>
-            <DialogTrigger asChild>
-              <div className="cursor-pointer rounded-[50%] lg:rounded-[20px] flex items-center justify-center opacity-70 lg:opacity-100 hover:opacity-100 bg-white w-[50px] lg:w-[200px] h-[50px] shadow-2xl">
-                <SiGooglemessages className="text-slate-900 text-3xl lg:hidden" />
-                <span className="text-slate-900 hidden lg:block font-bold">
+            <DialogTrigger>
+              <div className="cursor-pointer rounded-[50%] lg:rounded-[20px] flex items-center justify-center opacity-70 lg:opacity-100 hover:opacity-100 bg-slate-800  w-[50px] lg:w-[200px] h-[50px] shadow-2xl">
+                <MdOutlineWorkOutline className="text-white text-3xl lg:hidden" />
+                <span className=" hidden lg:block font-bold">
                   I'm open for work
                 </span>
               </div>

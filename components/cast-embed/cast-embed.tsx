@@ -173,6 +173,9 @@ export function CastEmbed({
 }
 
 function CastEmbedBody({ cast, client }: { cast: CastData; client?: boolean }) {
+  const urls = cast?.embeds && cast?.embeds.urls
+  const lastUrl = (urls && urls[urls.length - 1]?.openGraph?.url) || ""
+
   if (
     cast?.embeds &&
     cast?.embeds?.urls &&
@@ -180,17 +183,22 @@ function CastEmbedBody({ cast, client }: { cast: CastData; client?: boolean }) {
     cast?.embeds?.urls[0]?.openGraph?.url &&
     cast?.embeds?.urls[0]?.openGraph?.frame
   ) {
-    return <FrameRenderer frameUrl={cast?.embeds?.urls[0]?.openGraph?.url} />
+    return (
+      <div>
+        <Linkify as="p" options={linkifyOptions}>
+          {stripLastEmbedUrlFromCastBody(cast?.text ?? "", lastUrl)}
+        </Linkify>
+        <FrameRenderer frameUrl={cast?.embeds?.urls[0]?.openGraph?.url} />
+      </div>
+    )
   } else {
     const images = cast?.embeds && cast?.embeds.images
-    const urls = cast?.embeds && cast?.embeds.urls
     const hasImages = images && images.length > 0
     const hasVideos =
       cast?.embeds && cast?.embeds.videos && cast?.embeds.videos.length > 0
     const videos = cast?.embeds && cast?.embeds.videos
     const hasUrls =
       cast?.embeds && cast?.embeds.urls && cast?.embeds.urls.length > 0
-    const lastUrl = (urls && urls[urls.length - 1]?.openGraph?.url) || ""
     const hasCastEmbeds = cast?.embeds && cast?.embeds.casts
     const quoteCasts = cast?.embeds && cast?.embeds.casts
 
@@ -304,13 +312,13 @@ function CastEmbedBody({ cast, client }: { cast: CastData; client?: boolean }) {
                   className="farcaster-embed-quote-cast"
                 >
                   <div className="farcaster-embed-metadata">
-                    <div className="farcaster-embed-avatar-link">
+                    <div className="min-w-[20px] min-h-[20px] max-w-[20px] max-h-[20px] rounded-[50%] overflow-hidden">
                       <img
                         src={quoteCast?.author?.pfp?.url}
                         alt={`@${quoteCast.author?.username}`}
-                        width={20}
-                        height={20}
-                        className="farcaster-embed-author-avatar"
+                        width={0}
+                        height={0}
+                        className="w-full h-full object-cover"
                       />
                     </div>
                     <div className="farcaster-embed-author">

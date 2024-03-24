@@ -86,10 +86,10 @@ export default function FrameRenderer({ frameUrl }: FrameRendererProps) {
         frameState={frameState}
         theme={{
           bg: "transparent",
-          buttonBg: "#fff",
-          buttonBorderColor: "#111",
+          buttonBg: "#4c3a4ec0",
+          buttonBorderColor: "transparent",
           buttonHoverBg: "#efefef",
-          buttonColor: "#444",
+          buttonColor: "#FFF",
           buttonRadius: "5",
         }}
         FrameImage={FrameImageNext}

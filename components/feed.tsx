@@ -38,7 +38,7 @@ export default function Feed({
               <Loader2 className="h-4 w-4 animate-spin" />
             </Button>
           ) : (
-            <Button variant="secondary" onClick={refetchData}>
+            <Button variant="secondary" onClick={() => refetchData()}>
               More
             </Button>
           )}

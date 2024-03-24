@@ -104,6 +104,30 @@
   margin: 1rem 0 !important;
 }
 
+.custom-frame input {
+  color: #111;
+  background: transparent;
+  border: transparent;
+  font-size: 0.9rem;
+  padding: 0.2rem 0;
+  border-bottom: 1px solid #ffffff78 !important;
+  border-radius: 0px !important;
+  margin: 0 0.6rem;
+}
+
+.custom-frame button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: transparent;
+  background: linear-gradient(to right, #3a3aeb, #1515aa);
+  gap: 0.3rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  padding: 0.5rem 1rem;
+}
+
 @media (min-width: 768px) {
   .farcaster-embed-container {
     width: 600px !important;
