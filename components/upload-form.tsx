@@ -7,19 +7,19 @@ import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
 import { Loader2 } from "lucide-react"
 import { z } from "zod"
 import Image from "next/image"
 import { FarcasterUser } from "@/lib/types/farcaster-user"
 import { uploadFile } from "@/lib/upload-file"
 import { DEV_CHANNEL } from "@/lib/utils"
+import { Textarea } from "./ui/textarea"
+import { CiImageOn } from "react-icons/ci"
 
 const formSchema = z.object({
   cast: z.string().min(2).max(320),
@@ -29,11 +29,13 @@ const formSchema = z.object({
 interface UploadFormProps {
   farcasterUser: FarcasterUser
   refetchData: (reloadFeed: boolean) => void
+  userCastMessage?: string
 }
 
 export default function UploadForm({
   farcasterUser,
   refetchData,
+  userCastMessage,
 }: UploadFormProps) {
   const [selectedFile, setSelecteFile] = useState()
   const [imageLoading, setImageLoading] = useState(false)
@@ -55,7 +57,7 @@ export default function UploadForm({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      cast: "",
+      cast: userCastMessage ? userCastMessage : "",
       file: "",
     },
   })
@@ -130,12 +132,30 @@ export default function UploadForm({
   }
 
   return (
-    <div className="flex flex-col flex-grow justify-center items-center">
+    <div className="flex flex-col flex-grow justify-center items-center py-4">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="w-full space-y-8"
+          className="w-full space-y-4"
         >
+          <FormField
+            control={form.control}
+            name="cast"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>Cast</FormLabel>
+                <FormControl>
+                  <Textarea
+                    className="w-full max-w-[600px] min-h-[130px] mb-4 resize-none"
+                    placeholder="What's on your mind?"
+                    disabled={loading ? true : false}
+                    {...field}
+                  ></Textarea>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           {selectedFile && !imageLoading && (
             <div className="relative">
               <Image
@@ -149,31 +169,33 @@ export default function UploadForm({
             </div>
           )}
           {imageLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          {!selectedFile && (
-            <Input
-              placeholder="file"
-              type="file"
-              onChange={fileChangeHandler}
-            />
-          )}
-          <FormField
-            control={form.control}
-            name="cast"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>Cast</FormLabel>
-                <FormControl>
-                  <Input
-                    disabled={loading ? true : false}
-                    placeholder="Image uploaded from PhotoCast"
-                    {...field}
-                  />
-                </FormControl>
-                <FormDescription>Cast / Caption</FormDescription>
-                <FormMessage />
-              </FormItem>
+          <>
+            {!selectedFile && (
+              <div className="flex justify-end">
+                <input
+                  id="fileInput"
+                  className="hidden"
+                  type="file"
+                  onChange={fileChangeHandler}
+                />
+                <label htmlFor="fileInput" style={{ cursor: "pointer" }}>
+                  <div
+                    style={{
+                      width: "40px",
+                      height: "40px",
+                      backgroundColor: "#eee3",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      borderRadius: "50%",
+                    }}
+                  >
+                    <CiImageOn className="text-2xl" />
+                  </div>
+                </label>
+              </div>
             )}
-          />
+          </>
           {loading ? (
             ButtonLoading()
           ) : (

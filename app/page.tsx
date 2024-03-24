@@ -11,6 +11,9 @@ import HireFrameForm from "@/components/hire-frame-form"
 import { useFarcaster } from "@/services/user-context"
 import { CastData } from "@/lib/types/cast"
 import { DEV_CHANNEL } from "@/lib/utils"
+import { Textarea } from "@/components/ui/textarea"
+import { MdOutlineWorkOutline } from "react-icons/md"
+import { SiGooglemessages } from "react-icons/si"
 
 export default function Page({}: {
   searchParams: Record<string, string>
@@ -22,6 +25,20 @@ export default function Page({}: {
   const [loadingFeed, setLoadingFeed] = useState(true)
   const [loadingMore, setLoadingMore] = useState(false)
   const [nextPageToken, setNextPageToken] = useState("")
+  const [userCastMessage, setUserCastMessage] = useState("")
+  const [isScrolled, setIsScrolled] = useState(false)
+
+  useEffect(() => {
+    function handleScroll() {
+      if (window.scrollY > 100) {
+        setIsScrolled(true)
+      } else {
+        setIsScrolled(false)
+      }
+    }
+    window.addEventListener("scroll", handleScroll)
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
 
   async function fetchData(nextPage: any, initialLoad: boolean) {
     try {
@@ -69,12 +86,18 @@ export default function Page({}: {
   }, [])
 
   return (
-    <div className="pt-[6rem] px-5 flex flex-col items-center border max-w-[700px] m-auto">
+    <div className="pt-[6rem] px-5 flex flex-col items-center border max-w-[700px] m-auto relative">
+      <Textarea
+        className="w-full max-w-[600px] min-h-[100px] mb-4 resize-none"
+        placeholder="What's on your mind?"
+        value={userCastMessage}
+        onChange={(e) => setUserCastMessage(e.target.value)}
+      ></Textarea>
       <div className="max-w-[600px] gap-4 w-full flex items-center">
         <Dialog>
           <DialogTrigger asChild>
             <Button
-              className="w-full border border-slate-500"
+              className="w-[80%] md:w-full border border-slate-500"
               variant="outline"
             >
               Create post
@@ -85,6 +108,7 @@ export default function Page({}: {
               <UploadForm
                 farcasterUser={farcasterUser as FarcasterUser}
                 refetchData={refetchData}
+                userCastMessage={userCastMessage}
               />
             ) : (
               <LoginWindow
@@ -99,10 +123,11 @@ export default function Page({}: {
         <Dialog>
           <DialogTrigger asChild>
             <Button
-              className="w-full border border-slate-500"
+              className="w-[20%] md:w-full border border-slate-500"
               variant="default"
             >
-              I'm open for work
+              <MdOutlineWorkOutline className="text-lg md:hidden" />
+              <span className="hidden md:block">I'm open for work</span>
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px] max-w-[375px] max-h-[100vh] rounded overflow-auto">
@@ -128,6 +153,59 @@ export default function Page({}: {
         loadingMore={loadingMore}
         refetchData={refetchData}
       />
+      {isScrolled && (
+        <div className="flex flex-col gap-2 lg:gap-6 lg:bottom-20 fixed bottom-4 right-4 lg:right-20">
+          <Dialog>
+            <DialogTrigger asChild>
+              <div className="rounded-[50%] lg:rounded-[20px] flex items-center justify-center opacity-70 lg:opacity-100 hover:opacity-100 bg-slate-800 w-[50px] lg:w-[200px] h-[50px] shadow-2xl">
+                <MdOutlineWorkOutline className="text-white text-3xl lg:hidden" />
+                <span className="hidden lg:block font-bold">Create a post</span>
+              </div>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px] max-w-[375px]">
+              {farcasterUser?.status === "approved" ? (
+                <UploadForm
+                  farcasterUser={farcasterUser as FarcasterUser}
+                  refetchData={refetchData}
+                  userCastMessage={userCastMessage}
+                />
+              ) : (
+                <LoginWindow
+                  farcasterUser={farcasterUser}
+                  loading={loading}
+                  startFarcasterSignerProcess={startFarcasterSignerProcess}
+                  logout={logout}
+                ></LoginWindow>
+              )}
+            </DialogContent>
+          </Dialog>
+          <Dialog>
+            <DialogTrigger asChild>
+              <div className="rounded-[50%] lg:rounded-[20px] flex items-center justify-center opacity-70 lg:opacity-100 hover:opacity-100 bg-white w-[50px] lg:w-[200px] h-[50px] shadow-2xl">
+                <SiGooglemessages className="text-slate-900 text-3xl lg:hidden" />
+                <span className="text-slate-900 hidden lg:block font-bold">
+                  I'm open for work
+                </span>
+              </div>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px] max-w-[375px] max-h-[100vh] rounded overflow-auto">
+              {farcasterUser?.status === "approved" ? (
+                <HireFrameForm
+                  farcasterUser={farcasterUser as FarcasterUser}
+                  refetchData={refetchData}
+                />
+              ) : (
+                <LoginWindow
+                  farcasterUser={farcasterUser}
+                  loading={loading}
+                  startFarcasterSignerProcess={startFarcasterSignerProcess}
+                  logout={logout}
+                ></LoginWindow>
+              )}
+            </DialogContent>
+          </Dialog>
+        </div>
+      )}
     </div>
   )
 }

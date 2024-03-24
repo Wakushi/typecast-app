@@ -67,26 +67,31 @@ export function CastEmbed({
   const watches = cast?.watches && cast?.watches.count
 
   return (
-    <div className="not-prose farcaster-embed-container">
-      <div className="farcaster-embed-metadata main-metadata">
-        <a href={profileUrl} className="farcaster-embed-avatar-link">
-          <img
-            src={author?.pfp?.url}
-            alt={`@${author?.username}`}
-            width={48}
-            height={48}
-            className="farcaster-embed-author-avatar"
-          />
-        </a>
+    <div className="border border-slate-800 p-6 w-full min-w-[333px] md:w-[600px] rounded stretch">
+      <div className="flex items-center gap-4 mb-2">
+        {author?.pfp?.url && (
+          <a
+            href={profileUrl}
+            className="min-w-[48px] min-h-[48px] max-w-[48px] max-h-[48px] rounded-[50%] overflow-hidden"
+          >
+            <img
+              src={author?.pfp?.url}
+              alt={`@${author?.username}`}
+              width={0}
+              height={0}
+              className="w-full h-full object-cover"
+            />
+          </a>
+        )}
         <div className="farcaster-embed-author">
           <p className="farcaster-embed-author-display-name">
             {author?.displayName}
           </p>
           <p className="farcaster-embed-author-username">@{author?.username}</p>
         </div>
-        <div className="farcaster-embed-timestamp">
-          <p>{timestamp}</p>
-        </div>
+      </div>
+      <div className="opacity-50 text-sm">
+        <p>{timestamp}</p>
       </div>
       <CastEmbedBody cast={cast} />
       {cast?.tags?.length && cast?.tags?.length > 0 && (

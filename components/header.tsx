@@ -7,6 +7,8 @@ import { LoginWindow } from "./login-window"
 import { useEffect, useState } from "react"
 import { getFnameFromFid } from "@/lib/actions"
 import { useFarcaster } from "@/services/user-context"
+import { GiTBrick } from "react-icons/gi"
+import { FaCircleInfo } from "react-icons/fa6"
 
 export default function Header() {
   const { farcasterUser, loading, startFarcasterSignerProcess, logout } =
@@ -25,27 +27,42 @@ export default function Header() {
   }, [farcasterUser])
 
   return (
-    <header className="flex items-center border border-b bg-white bg-opacity-[0.02] shadow-xl backdrop-blur-sm p-4 justify-between w-full fixed top-0 z-10">
-      <div className={`${tilt_neon.className} text-2xl`}>typecast</div>
-      {farcasterUser && username ? (
-        <>@{username}</>
-      ) : (
+    <header className="flex items-center border border-b bg-white bg-opacity-[0.02] shadow-xl backdrop-blur-sm p-4 md:px-6 justify-between w-full fixed top-0 z-10">
+      <div
+        className={`${tilt_neon.className} text-2xl flex items-center gap-2`}
+      >
+        <GiTBrick className="text-[2rem]" />
+        <span>typecast</span>
+      </div>
+      <div className="flex items-center gap-4">
         <Dialog>
           <DialogTrigger asChild>
-            <Button>
-              <FaRegUser />
-            </Button>
+            <FaCircleInfo className="text-2xl opacity-60" />
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px] max-w-[375px]">
-            <LoginWindow
-              farcasterUser={farcasterUser}
-              loading={loading}
-              startFarcasterSignerProcess={startFarcasterSignerProcess}
-              logout={logout}
-            ></LoginWindow>
+            <div>About</div>
           </DialogContent>
         </Dialog>
-      )}
+        {farcasterUser && username ? (
+          <>@{username}</>
+        ) : (
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button>
+                <FaRegUser />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px] max-w-[375px]">
+              <LoginWindow
+                farcasterUser={farcasterUser}
+                loading={loading}
+                startFarcasterSignerProcess={startFarcasterSignerProcess}
+                logout={logout}
+              ></LoginWindow>
+            </DialogContent>
+          </Dialog>
+        )}
+      </div>
     </header>
   )
 }

@@ -26,7 +26,7 @@ export default function Feed({
         <div className="flex flex-col items-center justify-start gap-8 mb-6">
           {feed ? (
             feed.map((cast: CastData, index: any) => (
-              <div key={cast.hash + index}>
+              <div key={cast.hash + index} className="w-full">
                 <CastEmbed cast={cast} />
               </div>
             ))
