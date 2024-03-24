@@ -91,7 +91,9 @@ export default function UploadForm({
       setLoading(false)
       setCastComplete(true)
       setCastCompleteMessage("Cast Sent!")
-      refetchData(true)
+      setTimeout(() => {
+        refetchData(true)
+      }, 1000)
     } catch (error) {
       console.log(error)
       setLoading(false)

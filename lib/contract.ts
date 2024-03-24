@@ -34,7 +34,7 @@ export const TYPECAST_CONTRACT_ABI = [
   },
   {
     type: "function",
-    name: "getMission",
+    name: "getMissionByAddresses",
     inputs: [
       { name: "_recruiter", type: "address", internalType: "address" },
       { name: "_devAddress", type: "address", internalType: "address" },
@@ -72,6 +72,60 @@ export const TYPECAST_CONTRACT_ABI = [
             type: "uint256",
             internalType: "uint256",
           },
+          {
+            name: "offerIpfsHash",
+            type: "string",
+            internalType: "string",
+          },
+        ],
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "getMissionByOfferIpfsHash",
+    inputs: [
+      { name: "_offerIpfsHash", type: "string", internalType: "string" },
+    ],
+    outputs: [
+      {
+        name: "",
+        type: "tuple",
+        internalType: "struct TypecastRegistry.Mission",
+        components: [
+          {
+            name: "devAddress",
+            type: "address",
+            internalType: "address",
+          },
+          { name: "devFid", type: "uint256", internalType: "uint256" },
+          {
+            name: "recruiterAddress",
+            type: "address",
+            internalType: "address",
+          },
+          {
+            name: "recruiterFid",
+            type: "uint256",
+            internalType: "uint256",
+          },
+          {
+            name: "amountDue",
+            type: "uint256",
+            internalType: "uint256",
+          },
+          { name: "hiredAt", type: "uint256", internalType: "uint256" },
+          {
+            name: "completedAt",
+            type: "uint256",
+            internalType: "uint256",
+          },
+          {
+            name: "offerIpfsHash",
+            type: "string",
+            internalType: "string",
+          },
         ],
       },
     ],
@@ -88,13 +142,47 @@ export const TYPECAST_CONTRACT_ABI = [
         type: "uint256",
         internalType: "uint256",
       },
+      { name: "offerIpfsHash", type: "string", internalType: "string" },
     ],
     outputs: [],
     stateMutability: "payable",
   },
   {
     type: "function",
-    name: "missions",
+    name: "isOfferClosed",
+    inputs: [
+      { name: "_offerIpfsHash", type: "string", internalType: "string" },
+    ],
+    outputs: [{ name: "", type: "bool", internalType: "bool" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "s_missionByOfferIpfsHash",
+    inputs: [{ name: "offerIpfsHash", type: "string", internalType: "string" }],
+    outputs: [
+      { name: "devAddress", type: "address", internalType: "address" },
+      { name: "devFid", type: "uint256", internalType: "uint256" },
+      {
+        name: "recruiterAddress",
+        type: "address",
+        internalType: "address",
+      },
+      {
+        name: "recruiterFid",
+        type: "uint256",
+        internalType: "uint256",
+      },
+      { name: "amountDue", type: "uint256", internalType: "uint256" },
+      { name: "hiredAt", type: "uint256", internalType: "uint256" },
+      { name: "completedAt", type: "uint256", internalType: "uint256" },
+      { name: "offerIpfsHash", type: "string", internalType: "string" },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "s_missions",
     inputs: [
       { name: "recruiter", type: "address", internalType: "address" },
       { name: "devAddress", type: "address", internalType: "address" },
@@ -115,8 +203,116 @@ export const TYPECAST_CONTRACT_ABI = [
       { name: "amountDue", type: "uint256", internalType: "uint256" },
       { name: "hiredAt", type: "uint256", internalType: "uint256" },
       { name: "completedAt", type: "uint256", internalType: "uint256" },
+      { name: "offerIpfsHash", type: "string", internalType: "string" },
     ],
     stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "s_offerStatus",
+    inputs: [{ name: "offerIpfsHash", type: "string", internalType: "string" }],
+    outputs: [{ name: "closed", type: "bool", internalType: "bool" }],
+    stateMutability: "view",
+  },
+  {
+    type: "event",
+    name: "MissionCancelled",
+    inputs: [
+      {
+        name: "recruiter",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+      {
+        name: "devAddress",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: "event",
+    name: "MissionCompleted",
+    inputs: [
+      {
+        name: "recruiter",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+      {
+        name: "devAddress",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: "event",
+    name: "MissionCreated",
+    inputs: [
+      {
+        name: "recruiter",
+        type: "address",
+        indexed: false,
+        internalType: "address",
+      },
+      {
+        name: "recruiterFid",
+        type: "uint256",
+        indexed: true,
+        internalType: "uint256",
+      },
+      {
+        name: "devAddress",
+        type: "address",
+        indexed: false,
+        internalType: "address",
+      },
+      {
+        name: "devFid",
+        type: "uint256",
+        indexed: true,
+        internalType: "uint256",
+      },
+      {
+        name: "amount",
+        type: "uint256",
+        indexed: false,
+        internalType: "uint256",
+      },
+      {
+        name: "hiredAt",
+        type: "uint256",
+        indexed: false,
+        internalType: "uint256",
+      },
+      {
+        name: "offerIpfsHash",
+        type: "string",
+        indexed: true,
+        internalType: "string",
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: "event",
+    name: "OfferClosed",
+    inputs: [
+      {
+        name: "offerIpfsHash",
+        type: "string",
+        indexed: true,
+        internalType: "string",
+      },
+    ],
+    anonymous: false,
   },
   {
     type: "error",
@@ -143,6 +339,7 @@ export const TYPECAST_CONTRACT_ABI = [
     name: "TypecastRegistry__MissionNotPastDue",
     inputs: [],
   },
+  { type: "error", name: "TypecastRegistry__OfferClosed", inputs: [] },
   {
     type: "error",
     name: "TypecastRegistry__TransferFailed",

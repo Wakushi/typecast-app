@@ -10,8 +10,30 @@ import {
   getUserHiringInfo,
   unpinUserHiringInfo,
 } from "@/lib/actions"
+import { createPublicClient, http } from "viem"
+import { baseSepolia } from "viem/chains"
 
 const CONTRACT = (process.env.CONTRACT_ADDRESS as `0x`) || ""
+
+const publicClient = createPublicClient({
+  chain: baseSepolia,
+  transport: http(process.env.ALCHEMY_URL),
+})
+
+async function isOfferClosed(ipfsHash: any) {
+  try {
+    const isOfferClosed = await publicClient.readContract({
+      address: CONTRACT,
+      abi: TYPECAST_CONTRACT_ABI,
+      functionName: "isOfferClosed",
+      args: [ipfsHash],
+    })
+    return isOfferClosed
+  } catch (error) {
+    console.log(error)
+    return error
+  }
+}
 
 const app = new Frog({
   assetsPath: "/",
@@ -21,7 +43,8 @@ const app = new Frog({
 app.frame("/hire/:ipfsHash", async (c) => {
   const ipfsHash = c.req.param("ipfsHash")
   const data = await getUserHiringInfo(ipfsHash)
-  if (!data) {
+  const isClosed = await isOfferClosed(ipfsHash)
+  if (!data || isClosed) {
     return c.res({
       action: "/finish",
       image: (
@@ -365,7 +388,9 @@ app.frame("/hire/:ipfsHash", async (c) => {
     ),
     intents: [
       <TextInput placeholder="Hire for (number) days" />,
-      <Button.Transaction target={`/buy/${price}/${paymentAddress}/${fid}`}>
+      <Button.Transaction
+        target={`/buy/${price}/${paymentAddress}/${fid}/${ipfsHash}`}
+      >
         Hire for {price}$/day
       </Button.Transaction>,
       githubLink ? <Button.Link href={githubLink}>Github</Button.Link> : null,
@@ -497,29 +522,33 @@ app.frame("/finish", (c) => {
   })
 })
 
-app.transaction("/buy/:dailyPrice/:paymentAddress/:fid", async (c) => {
-  const { inputText } = c
+app.transaction(
+  "/buy/:dailyPrice/:paymentAddress/:fid/:ipfsHash",
+  async (c) => {
+    const { inputText } = c
 
-  const dailyPrice = c.req.param("dailyPrice")
-  const totalPriceInUsd = +dailyPrice * Number(inputText ?? 1)
+    const ipfsHash = c.req.param("ipfsHash")
+    const dailyPrice = c.req.param("dailyPrice")
+    const totalPriceInUsd = +dailyPrice * Number(inputText ?? 1)
 
-  const ethPriceInUsd = await getEthPriceInUSD()
-  const totalPriceInEth = totalPriceInUsd / ethPriceInUsd
+    const ethPriceInUsd = await getEthPriceInUSD()
+    const totalPriceInEth = totalPriceInUsd / ethPriceInUsd
 
-  const devAddress = c.req.param("paymentAddress")
-  const devFid = c.req.param("fid")
-  const recruiterFid = c.frameData?.fid
+    const devAddress = c.req.param("paymentAddress")
+    const devFid = c.req.param("fid")
+    const recruiterFid = c.frameData?.fid
 
-  return c.contract({
-    abi: TYPECAST_CONTRACT_ABI,
-    // @ts-ignore
-    chainId: "eip155:84532",
-    functionName: "hire",
-    args: [devAddress, devFid, recruiterFid],
-    to: CONTRACT,
-    value: parseEther(`${totalPriceInEth}`),
-  })
-})
+    return c.contract({
+      abi: TYPECAST_CONTRACT_ABI,
+      // @ts-ignore
+      chainId: "eip155:84532",
+      functionName: "hire",
+      args: [devAddress, devFid, recruiterFid, ipfsHash],
+      to: CONTRACT,
+      value: parseEther(`${totalPriceInEth}`),
+    })
+  }
+)
 
 devtools(app, { serveStatic })
 
