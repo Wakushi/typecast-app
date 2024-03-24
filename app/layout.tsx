@@ -1,6 +1,7 @@
 import "./globals.css"
 import Header from "@/components/header"
 import { Providers } from "@/components/providers"
+import { Toaster } from "@/components/ui/toaster"
 import { inter } from "@/public/fonts"
 
 export default function RootLayout({
@@ -15,6 +16,7 @@ export default function RootLayout({
           {" "}
           <Header />
           {children}
+          <Toaster />
         </Providers>
       </body>
     </html>

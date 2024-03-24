@@ -381,3 +381,6 @@ export const TYPECAST_CONTRACT_ABI = [
     inputs: [],
   },
 ]
+
+export const TYPECAST_CONTRACT_ADDRESS =
+  "0x9453b06fc0CfBD2587453425f6092A7B5B57D494"
