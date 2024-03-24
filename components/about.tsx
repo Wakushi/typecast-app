@@ -23,7 +23,15 @@ export default function About() {
         </p>
 
         <p className="text-md opacity-60">
-          Built during the EthGlobal Farcaster hackathon by{" "}
+          Built during the{" "}
+          <a
+            className="underline"
+            href="https://ethglobal.com/events/frameworks"
+            target="_blank"
+          >
+            EthGlobal Frameworks
+          </a>{" "}
+          hackathon by{" "}
           <a
             className="underline"
             href="https://warpcast.com/makushi"

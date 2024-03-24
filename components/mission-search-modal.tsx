@@ -99,7 +99,7 @@ export default function MissionModal({
   return (
     <Dialog>
       <DialogTrigger>
-        <span className="text-sm font-semibold px-2 py-4">Missions</span>
+        <span className="text-sm font-semibold p-[0.4rem]">Missions</span>
       </DialogTrigger>
       <DialogContent className="p-10">
         {isLoading ? (
