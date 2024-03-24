@@ -10,13 +10,11 @@ import UploadForm from "@/components/upload-form"
 import HireFrameForm from "@/components/hire-frame-form"
 import { useFarcaster } from "@/services/user-context"
 import { CastData } from "@/lib/types/cast"
+import { DEV_CHANNEL } from "@/lib/utils"
 
 export default function Page({}: {
   searchParams: Record<string, string>
 }): JSX.Element {
-  const DEV_CHANNEL =
-    "chain://eip155:1/erc721:0x7dd4e31f1530ac682c8ea4d8016e95773e08d8b0"
-
   const { farcasterUser, loading, startFarcasterSignerProcess, logout } =
     useFarcaster()
 
@@ -62,8 +60,8 @@ export default function Page({}: {
     }
   }
 
-  function refetchData() {
-    fetchData(nextPageToken, false)
+  function refetchData(reloadFeed: boolean = false) {
+    fetchData(nextPageToken, reloadFeed)
   }
 
   useEffect(() => {

@@ -15,30 +15,20 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Loader2 } from "lucide-react"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import channels from "@/lib/channels.json"
-
 import { z } from "zod"
 import Image from "next/image"
 import { FarcasterUser } from "@/lib/types/farcaster-user"
-import { Channel } from "@/lib/types/channel"
 import { uploadFile } from "@/lib/upload-file"
+import { DEV_CHANNEL } from "@/lib/utils"
 
 const formSchema = z.object({
   cast: z.string().min(2).max(320),
   file: z.any(),
-  parentUrl: z.string(), // channel url
 })
 
 interface UploadFormProps {
   farcasterUser: FarcasterUser
-  refetchData: () => void
+  refetchData: (reloadFeed: boolean) => void
 }
 
 export default function UploadForm({
@@ -80,7 +70,7 @@ export default function UploadForm({
         fid: farcasterUser.fid,
         link: fileLink,
         castMessage: values.cast,
-        parentUrl: values.parentUrl,
+        parentUrl: DEV_CHANNEL,
       })
       const submitMessage = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_API_URL}/api/message`,
@@ -98,10 +88,10 @@ export default function UploadForm({
         setCastComplete(true)
         setCastCompleteMessage("Problem sending cast")
       }
-      refetchData()
       setLoading(false)
       setCastComplete(true)
       setCastCompleteMessage("Cast Sent!")
+      refetchData(true)
     } catch (error) {
       console.log(error)
       setLoading(false)
@@ -179,32 +169,6 @@ export default function UploadForm({
                 </FormControl>
                 <FormDescription>Cast / Caption</FormDescription>
                 <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="parentUrl"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Channel</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a channel to cast in" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {channels.map((channel: Channel) => (
-                      <SelectItem key={channel.url} value={channel.url}>
-                        {channel.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
               </FormItem>
             )}
           />

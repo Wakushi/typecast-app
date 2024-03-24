@@ -34,7 +34,7 @@ type HireMeFormData = z.infer<typeof hireMeFormSchema>
 
 interface HireFrameFormProps {
   farcasterUser: FarcasterUser
-  refetchData: () => void
+  refetchData: (reloadFeed: boolean) => void
 }
 
 export default function HireFrameForm({
@@ -121,10 +121,10 @@ export default function HireFrameForm({
           setCastComplete(true)
           setCastCompleteMessage("Problem sending cast")
         }
-        refetchData()
         setLoading(false)
         setCastComplete(true)
         setCastCompleteMessage("Cast Sent!")
+        refetchData(true)
       }
     } catch (error) {
       console.log(error)
