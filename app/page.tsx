@@ -79,6 +79,9 @@ export default function Page({}: {
 
   function refetchData(reloadFeed: boolean = false) {
     fetchData(nextPageToken, reloadFeed)
+    if (reloadFeed) {
+      scrollTo({ top: 0, behavior: "smooth" })
+    }
   }
 
   useEffect(() => {

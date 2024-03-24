@@ -1,7 +1,7 @@
 import "./globals.css"
 import Header from "@/components/header"
 import { Providers } from "@/components/providers"
-import { inter } from "@/styles/fonts"
+import { inter } from "@/public/fonts"
 
 export default function RootLayout({
   children,

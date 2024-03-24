@@ -34,10 +34,14 @@ export const TYPECAST_CONTRACT_ABI = [
   },
   {
     type: "function",
-    name: "getMissionByAddresses",
+    name: "getMissionByFid",
     inputs: [
-      { name: "_recruiter", type: "address", internalType: "address" },
-      { name: "_devAddress", type: "address", internalType: "address" },
+      {
+        name: "_recruiterFid",
+        type: "uint256",
+        internalType: "uint256",
+      },
+      { name: "_devFid", type: "uint256", internalType: "uint256" },
     ],
     outputs: [
       {
@@ -186,6 +190,37 @@ export const TYPECAST_CONTRACT_ABI = [
     inputs: [
       { name: "recruiter", type: "address", internalType: "address" },
       { name: "devAddress", type: "address", internalType: "address" },
+    ],
+    outputs: [
+      { name: "devAddress", type: "address", internalType: "address" },
+      { name: "devFid", type: "uint256", internalType: "uint256" },
+      {
+        name: "recruiterAddress",
+        type: "address",
+        internalType: "address",
+      },
+      {
+        name: "recruiterFid",
+        type: "uint256",
+        internalType: "uint256",
+      },
+      { name: "amountDue", type: "uint256", internalType: "uint256" },
+      { name: "hiredAt", type: "uint256", internalType: "uint256" },
+      { name: "completedAt", type: "uint256", internalType: "uint256" },
+      { name: "offerIpfsHash", type: "string", internalType: "string" },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "s_missionsByFid",
+    inputs: [
+      {
+        name: "recruiterFid",
+        type: "uint256",
+        internalType: "uint256",
+      },
+      { name: "devFid", type: "uint256", internalType: "uint256" },
     ],
     outputs: [
       { name: "devAddress", type: "address", internalType: "address" },

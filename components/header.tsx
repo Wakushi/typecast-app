@@ -2,10 +2,10 @@
 import { FaRegUser } from "react-icons/fa"
 import { Button } from "./ui/button"
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
-import { tilt_neon } from "@/styles/fonts"
+import { tilt_neon } from "@/public/fonts"
 import { LoginWindow } from "./login-window"
 import { useEffect, useState } from "react"
-import { getFnameFromFid } from "@/lib/actions"
+import { getUserData } from "@/lib/actions"
 import { useFarcaster } from "@/services/user-context"
 import { GiTBrick } from "react-icons/gi"
 import { FaCircleInfo } from "react-icons/fa6"
@@ -13,15 +13,15 @@ import { FaCircleInfo } from "react-icons/fa6"
 export default function Header() {
   const { farcasterUser, loading, startFarcasterSignerProcess, logout } =
     useFarcaster()
-  const [username, setUsername] = useState<string>("")
+  const [detailedUser, setDetailedUser] = useState<any>({})
 
   useEffect(() => {
-    async function getUsername(fid: any): Promise<string> {
-      return await getFnameFromFid(fid)
+    async function getUser(fid: any): Promise<any> {
+      return await getUserData(fid)
     }
     if (farcasterUser?.fid) {
-      getUsername(farcasterUser?.fid).then((usernameFromFid) => {
-        setUsername(usernameFromFid)
+      getUser(farcasterUser.fid).then((user) => {
+        setDetailedUser(user)
       })
     }
   }, [farcasterUser])
@@ -43,8 +43,21 @@ export default function Header() {
             <div>About</div>
           </DialogContent>
         </Dialog>
-        {farcasterUser && username ? (
-          <>@{username}</>
+        {farcasterUser?.fid && detailedUser.username ? (
+          <a
+            href={`https://warpcast.com/${detailedUser.username}`}
+            target="_blank"
+            className="min-w-[48px] min-h-[48px] max-w-[48px] max-h-[48px] rounded-[50%] overflow-hidden"
+          >
+            {" "}
+            <img
+              src={detailedUser.pfp_url}
+              alt={`@${detailedUser?.username}'s profile picture`}
+              width={48}
+              height={48}
+              className="min-w-[48px] min-h-[48px] object-cover"
+            />
+          </a>
         ) : (
           <Dialog>
             <DialogTrigger asChild>
